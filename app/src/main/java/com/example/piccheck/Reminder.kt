@@ -1,15 +1,14 @@
 package com.example.piccheck
 
-import android.graphics.Bitmap
-import androidx.room.ColumnInfo
-import androidx.room.*
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 @Entity(tableName = "reminders")
 data class Reminder(
     @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
     val goal: String,
-    val date: String? = null,
-    val reflection: String? = null,
-    val completed: Boolean,
-    val picture: Bitmap? = null
+    val date: String?,
+    val additionalInfo: String?,
+    val isCompleted: Boolean
 )

@@ -42,20 +42,10 @@ class HomeFragment : Fragment() {
 
         //Load data from database and update adapter
         //reminderAdapter.updateData(loadedData)
-//        val database = ReminderDatabase
-//        reminderDao = database.reminderDao()
-
-        val database = context?.let {
-            Room.databaseBuilder(
-                it,
-                ReminderDatabase::class.java, "reminder-database"
-            ).build()
-        }
-        val repository = database?.let { ReminderRepository(it) }
+        val database = context?.let { ReminderDatabase.getInstance(it) }
         if (database != null) {
             reminderDao = database.reminderDao()
-        };
-//        reminderDao = repository.reminderDao
+        }
 
         // Load data from database and update adapter
         lifecycleScope.launch {
