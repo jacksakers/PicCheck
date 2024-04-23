@@ -25,3 +25,21 @@ abstract class ReminderDatabase : RoomDatabase() {
 //        }
 //    }
 }
+
+object DatabaseProvider {
+    @Volatile
+    private var instance: ReminderDatabase? = null
+
+    fun getDatabase(context: Context): ReminderDatabase {
+        if (instance == null) {
+            synchronized(ReminderDatabase::class) {
+                instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    ReminderDatabase::class.java,
+                    "reminder-database"
+                ).build()
+            }
+        }
+        return instance!!
+    }
+}
