@@ -1,8 +1,8 @@
 package com.example.piccheck
 
+import android.graphics.Bitmap
 import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
 
 @Entity
 data class Reminder(
@@ -10,5 +10,6 @@ data class Reminder(
     val goal: String,
     val date: String? = null,
     val reflection: String? = null,
-    val completed: Boolean
+    val completed: Boolean,
+    val picture: Bitmap? = null
 )
