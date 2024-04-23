@@ -4,7 +4,7 @@ import androidx.room.*
 
 @Dao
 interface ReminderDao {
-    @Query("SELECT * FROM reminder")
+    @Query("SELECT * FROM reminders")
     suspend fun getAllReminders(): List<Reminder>
 
     @Insert(onConflict=OnConflictStrategy.REPLACE)

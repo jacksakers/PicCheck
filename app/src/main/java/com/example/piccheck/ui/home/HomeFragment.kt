@@ -9,13 +9,20 @@ import com.example.piccheck.databinding.FragmentHomeBinding
 import android.app.DatePickerDialog
 import android.util.Log
 import android.widget.DatePicker
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.room.Room
 import com.example.piccheck.Reminder
+import com.example.piccheck.ReminderDao
+import com.example.piccheck.ReminderDatabase
+import com.example.piccheck.ReminderRepository
+import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding
+    private lateinit var reminderDao: ReminderDao
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,6 +42,26 @@ class HomeFragment : Fragment() {
 
         //Load data from database and update adapter
         //reminderAdapter.updateData(loadedData)
+//        val database = ReminderDatabase
+//        reminderDao = database.reminderDao()
+
+        val database = context?.let {
+            Room.databaseBuilder(
+                it,
+                ReminderDatabase::class.java, "reminder-database"
+            ).build()
+        }
+        val repository = database?.let { ReminderRepository(it) }
+        if (database != null) {
+            reminderDao = database.reminderDao()
+        };
+//        reminderDao = repository.reminderDao
+
+        // Load data from database and update adapter
+        lifecycleScope.launch {
+            val loadedData = reminderDao.getAllReminders()
+            reminderAdapter.updateData(loadedData)
+        }
 
         binding?.fab?.setOnClickListener {
             toggleReminderInput()
@@ -45,10 +72,18 @@ class HomeFragment : Fragment() {
             val date = binding?.editTextDate?.text.toString().takeIf { it.isNotEmpty() }
             val reminder = Reminder(goal, date, null, false)
             // Implement storing the reminder or updating the UI here
+            insertReminder(reminder)
+
         }
 
         binding?.editTextDate?.setOnClickListener {
             showDatePicker(it)
+        }
+    }
+
+    private fun insertReminder(reminder: Reminder) {
+        lifecycleScope.launch {
+            reminderDao.insertReminder(reminder)
         }
     }
 

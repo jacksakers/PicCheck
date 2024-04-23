@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import androidx.room.ColumnInfo
 import androidx.room.*
 
-@Entity
+@Entity(tableName = "reminders")
 data class Reminder(
     @PrimaryKey(autoGenerate = true)
     val goal: String,
