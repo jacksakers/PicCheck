@@ -24,6 +24,7 @@ import java.io.File
 import java.io.FileWriter
 import java.util.Calendar
 import com.google.gson.Gson
+import kotlin.random.Random
 
 class HomeFragment : Fragment(), ReminderAdapter.ImagePickerListener {
     private var _binding: FragmentHomeBinding? = null
@@ -58,10 +59,10 @@ class HomeFragment : Fragment(), ReminderAdapter.ImagePickerListener {
         binding?.buttonAddReminder?.setOnClickListener {
             val goal = binding?.editTextGoal?.text.toString()
             val date = binding?.editTextDate?.text.toString().takeIf { it.isNotEmpty() }
-            val reminder = Reminder(goal, date, null,  false)
+            val id = getRandomString(10)
+            val reminder = Reminder(id, goal, date, null,  false)
             // Implement storing the reminder or updating the UI here
             insertReminder(reminder)
-
         }
 
         binding?.editTextDate?.setOnClickListener {
@@ -69,6 +70,16 @@ class HomeFragment : Fragment(), ReminderAdapter.ImagePickerListener {
         }
     }
 
+    override fun writeDataToFile(data: String) {
+        writeToFile(data)
+    }
+
+    fun getRandomString(length: Int) : String {
+        val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
+        return (1..length)
+            .map { allowedChars.random() }
+            .joinToString("")
+    }
     private fun insertReminder(reminder: Reminder) {
         val remindersList = mutableListOf<Reminder>()
 
@@ -99,13 +110,12 @@ class HomeFragment : Fragment(), ReminderAdapter.ImagePickerListener {
         return gson.fromJson(json, Array<Reminder>::class.java).toList()
     }
 
-    private fun writeToFile(data: String) {
+    public fun writeToFile(data: String) {
         val file = File(requireContext().filesDir, "reminders.json")
         FileWriter(file).use {
             it.write(data)
         }
         Log.d("WriteToFile", "Data written to file: $data")
-
     }
 
     public fun showDatePicker(view: View) {
@@ -146,8 +156,9 @@ class HomeFragment : Fragment(), ReminderAdapter.ImagePickerListener {
     }
 
     fun onImageCaptured(imagePath: String) {
-        // Create a new Reminder object with the imagePath and set completed to true
-        val reminder = Reminder("Goal", "Date", "Reflection", true, imagePath)
+        // Create a new Reminder object with the imagePath and set completed to
+
+        val reminder = Reminder(getRandomString(10),"Goal", "Date", "Reflection", true, imagePath)
         // Insert the reminder to the database or update UI
         Log.d("imagePath that was uploaded: ", imagePath)
 //        insertReminder(reminder)

@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piccheck.R
 import com.example.piccheck.Reminder
+import com.google.gson.Gson
 
 class ReminderAdapter(private var reminders: List<Reminder>, private val imagePickerListener: ImagePickerListener) : RecyclerView.Adapter<ReminderAdapter.ReminderViewHolder>() {
 
@@ -58,6 +59,9 @@ class ReminderAdapter(private var reminders: List<Reminder>, private val imagePi
         reminders = reminders.filterIndexed { index, _ -> index != position }
         notifyItemRemoved(position)
         notifyItemRangeChanged(position, reminders.size)
+        val gson = Gson()
+        val json = gson.toJson(reminders)
+        imagePickerListener.writeDataToFile(json)
     }
 
     private fun completeReminderAt(position: Int) {
@@ -75,5 +79,6 @@ class ReminderAdapter(private var reminders: List<Reminder>, private val imagePi
 
     interface ImagePickerListener {
         fun onTakePictureClicked()
+        fun writeDataToFile(data: String)
     }
 }
