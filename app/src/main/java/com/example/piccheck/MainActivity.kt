@@ -52,14 +52,14 @@ class MainActivity<File> : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         // Set click listener for the upload photo button
-        binding.btnUploadPhoto.setOnClickListener {
-            // Check camera permission before opening the image picker
-            if (hasCameraPermission()) {
-                showImagePickerDialog()
-            } else {
-                requestCameraPermission()
-            }
-        }
+//        binding.btnUploadPhoto.setOnClickListener {
+//            // Check camera permission before opening the image picker
+//            if (hasCameraPermission()) {
+//                showImagePickerDialog()
+//            } else {
+//                requestCameraPermission()
+//            }
+//        }
 
     }
 
@@ -134,22 +134,28 @@ class MainActivity<File> : AppCompatActivity() {
         }
     }
 
-    private fun showImagePickerDialog() {
-        val options = arrayOf("Take Photo", "Choose from Gallery")
+    fun showImagePickerDialog() {
 
-        AlertDialog.Builder(this)
-            .setTitle("Choose Action")
-            .setItems(options) { dialog, which ->
-                when (which) {
-                    0 -> openImageTaker()// Launch camera for taking a picture
-                    1 -> pickImageLauncher.launch("image/*") // Launch image picker for selecting from gallery
+        if (hasCameraPermission()) {
+
+            val options = arrayOf("Take Photo", "Choose from Gallery")
+
+            AlertDialog.Builder(this)
+                .setTitle("Choose Action")
+                .setItems(options) { dialog, which ->
+                    when (which) {
+                        0 -> openImageTaker()// Launch camera for taking a picture
+                        1 -> pickImageLauncher.launch("image/*") // Launch image picker for selecting from gallery
+                    }
+                    dialog.dismiss()
                 }
-                dialog.dismiss()
-            }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
+        } else {
+            requestCameraPermission()
+        }
     }
 
 }

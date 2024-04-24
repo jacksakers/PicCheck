@@ -17,6 +17,7 @@ import android.widget.DatePicker
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.piccheck.MainActivity
 import com.example.piccheck.R
 import com.example.piccheck.Reminder
 import java.io.File
@@ -24,12 +25,11 @@ import java.io.FileWriter
 import java.util.Calendar
 import com.google.gson.Gson
 
-
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), ReminderAdapter.ImagePickerListener {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding
 
-    private val reminderAdapter = ReminderAdapter(listOf())
+    val reminderAdapter = ReminderAdapter(listOf(), this)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -143,5 +143,11 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
          super.onDestroyView()
         _binding = null
+    }
+
+
+    override fun onTakePictureClicked() {
+        // Call the showImagePickerDialog() function here
+        (activity as? MainActivity<*>)?.showImagePickerDialog()
     }
 }
