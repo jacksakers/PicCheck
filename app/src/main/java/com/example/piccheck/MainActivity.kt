@@ -1,6 +1,9 @@
 package com.example.piccheck
 
+import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -9,6 +12,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -20,6 +25,8 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import android.Manifest
+
 
 class MainActivity<File> : AppCompatActivity() {
 
@@ -46,23 +53,16 @@ class MainActivity<File> : AppCompatActivity() {
 
         // Set click listener for the upload photo button
         binding.btnUploadPhoto.setOnClickListener {
-            // Open the options for taking a photo or selecting one from storage
-            showImagePickerDialog()
-
+            // Check camera permission before opening the image picker
+            if (hasCameraPermission()) {
+                showImagePickerDialog()
+            } else {
+                requestCameraPermission()
+            }
         }
 
     }
 
-
-    private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            // The picture was taken successfully
-            // Do something with the taken picture
-        } else {
-            // Taking picture was canceled or failed
-            // Handle accordingly
-        }
-    }
 
     private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         // Handle the result of selecting an image from storage
@@ -75,6 +75,65 @@ class MainActivity<File> : AppCompatActivity() {
         }
     }
 
+    companion object {
+        private const val REQUEST_CAMERA_PERMISSION = 101
+        private const val REQUEST_IMAGE_CAPTURE = 102
+    }
+
+    private fun openImageTaker() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(packageManager) != null) {
+            // Launch the camera app
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+        } else {
+            // Handle the case where the camera app is not available
+            // Display an error message or fallback behavior
+        }
+    }
+
+
+    private fun hasCameraPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestCameraPermission() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.CAMERA),
+            REQUEST_CAMERA_PERMISSION
+        )
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, open the image picker
+                showImagePickerDialog()
+            } else {
+                // Permission denied, handle accordingly (e.g., show an explanation or disable functionality)
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
+            // The image was captured successfully
+            // Do something with the captured image
+            val imageBitmap = data?.extras?.get("data") as Bitmap
+            // Now you have the captured image in `imageBitmap`, you can use it as needed
+        }
+    }
+
     private fun showImagePickerDialog() {
         val options = arrayOf("Take Photo", "Choose from Gallery")
 
@@ -82,7 +141,7 @@ class MainActivity<File> : AppCompatActivity() {
             .setTitle("Choose Action")
             .setItems(options) { dialog, which ->
                 when (which) {
-                    0 -> dispatchTakePictureIntent() // Launch camera for taking a picture
+                    0 -> openImageTaker()// Launch camera for taking a picture
                     1 -> pickImageLauncher.launch("image/*") // Launch image picker for selecting from gallery
                 }
                 dialog.dismiss()
@@ -93,44 +152,4 @@ class MainActivity<File> : AppCompatActivity() {
             .show()
     }
 
-    lateinit var currentPhotoPath: String
-
-//    @Throws(IOException::class)
-//    private fun createImageFile(): File {
-//        // Create an image file name
-//        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-//        val storageDir: java.io.File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-//        return File.createTempFile(
-//            "JPEG_${timeStamp}_", /* prefix */
-//            ".jpg", /* suffix */
-//            storageDir /* directory */
-//        ).apply {
-//            // Save a file: path for use with ACTION_VIEW intents
-//            currentPhotoPath = absolutePath
-//        }
-//    }
-    private fun dispatchTakePictureIntent() {
-//        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-//            // Ensure that there's a camera activity to handle the intent
-//            takePictureIntent.resolveActivity(packageManager)?.also {
-//                // Create the File where the photo should go
-//                val photoFile: File? = try {
-//                    createImageFile()
-//                } catch (ex: IOException) {
-//                    // Error occurred while creating the File
-//                    null
-//                }
-//                // Continue only if the File was successfully created
-//                photoFile?.also {
-//                    val photoURI: Uri = FileProvider.getUriForFile(
-//                        this,
-//                        "com.example.android.fileprovider",
-//                        it
-//                    )
-//                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-//                    takePictureLauncher.launch(takePictureIntent)
-//                }
-//            }
-//        }
-    }
 }
