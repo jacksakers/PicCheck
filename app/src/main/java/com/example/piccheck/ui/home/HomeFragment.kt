@@ -9,18 +9,19 @@ import com.example.piccheck.databinding.FragmentHomeBinding
 import android.app.DatePickerDialog
 import android.util.Log
 import android.widget.DatePicker
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.piccheck.DatabaseProvider
 import com.example.piccheck.Reminder
-import com.example.piccheck.ReminderDao
-import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileWriter
 import java.util.Calendar
+import com.google.gson.Gson
+
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding
-    private lateinit var reminderDao: ReminderDao
+
+    private val reminderAdapter = ReminderAdapter(listOf())
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,21 +35,13 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val database = DatabaseProvider.getDatabase(requireContext())
-        reminderDao = database.reminderDao()
 
-        val reminderAdapter = ReminderAdapter(listOf())
         binding?.recyclerViewReminders?.adapter = reminderAdapter
         binding?.recyclerViewReminders?.layoutManager = LinearLayoutManager(context)
 
         //Load data from database and update adapter
-//        reminderDao = repository.reminderDao
-
-        // Load data from database and update adapter
-        lifecycleScope.launch {
-            val loadedData = reminderDao.getAllReminders()
-            reminderAdapter.updateData(loadedData)
-        }
+        val remindersFromFile = readRemindersFromFile()
+        reminderAdapter.updateData(remindersFromFile)
 
         binding?.fab?.setOnClickListener {
             toggleReminderInput()
@@ -57,7 +50,7 @@ class HomeFragment : Fragment() {
         binding?.buttonAddReminder?.setOnClickListener {
             val goal = binding?.editTextGoal?.text.toString()
             val date = binding?.editTextDate?.text.toString().takeIf { it.isNotEmpty() }
-            val reminder = Reminder(0, goal, date, null,  false)
+            val reminder = Reminder(goal, date, null,  false)
             // Implement storing the reminder or updating the UI here
             insertReminder(reminder)
 
@@ -69,9 +62,42 @@ class HomeFragment : Fragment() {
     }
 
     private fun insertReminder(reminder: Reminder) {
-        lifecycleScope.launch {
-            reminderDao.insertReminder(reminder)
+        val remindersList = mutableListOf<Reminder>()
+
+        // Read existing reminders from file
+        val existingReminders = readRemindersFromFile()
+
+        // Add the new reminder
+        remindersList.addAll(existingReminders)
+        remindersList.add(reminder)
+
+        // Convert the list to JSON
+        val gson = Gson()
+        val json = gson.toJson(remindersList)
+
+        // Write JSON to file
+        writeToFile(json)
+
+        val remindersFromFile = readRemindersFromFile()
+        reminderAdapter.updateData(remindersFromFile)
+    }
+
+    private fun readRemindersFromFile(): List<Reminder> {
+        val file = File(requireContext().filesDir, "reminders.json")
+        if (!file.exists()) return emptyList()
+
+        val json = file.readText()
+        val gson = Gson()
+        return gson.fromJson(json, Array<Reminder>::class.java).toList()
+    }
+
+    private fun writeToFile(data: String) {
+        val file = File(requireContext().filesDir, "reminders.json")
+        FileWriter(file).use {
+            it.write(data)
         }
+        Log.d("WriteToFile", "Data written to file: $data")
+
     }
 
     public fun showDatePicker(view: View) {

@@ -58,4 +58,6 @@ dependencies {
     kapt("androidx.room:room-compiler:$room_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
+    implementation( "com.google.code.gson:gson:2.8.8")
+
 }
