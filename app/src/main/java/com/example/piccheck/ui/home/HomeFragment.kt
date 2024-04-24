@@ -167,6 +167,6 @@ class HomeFragment : Fragment(), ReminderAdapter.ImagePickerListener {
 
     override fun onTakePictureClicked() {
         // Call the showImagePickerDialog() function here
-        (activity as? MainActivity<*>)?.showImagePickerDialog()
+        (activity as? MainActivity)?.showImagePickerDialog()
     }
 }

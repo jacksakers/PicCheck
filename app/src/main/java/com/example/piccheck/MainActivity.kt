@@ -26,10 +26,11 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import android.Manifest
+import android.util.Log
 import com.example.piccheck.ui.home.HomeFragment
 
 
-class MainActivity<File> : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
@@ -70,6 +71,7 @@ class MainActivity<File> : AppCompatActivity() {
         if (uri != null) {
             // Image was selected successfully
             // Do something with the selected image URI
+            Log.d("Image Launcher URI =", uri.toString())
         } else {
             // Image selection was canceled or failed
             // Handle accordingly
@@ -81,15 +83,50 @@ class MainActivity<File> : AppCompatActivity() {
         private const val REQUEST_IMAGE_CAPTURE = 102
     }
 
+    private lateinit var currentPhotoPath: String
+
+
     private fun openImageTaker() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(packageManager) != null) {
-            // Launch the camera app
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+            // Create the File where the photo should go
+            val photoFile: File? = try {
+                createImageFile()
+            } catch (ex: IOException) {
+                // Error occurred while creating the File
+                Log.e("MainActivity", "Error creating image file: ${ex.message}")
+                null
+            }
+            // Continue only if the File was successfully created
+            photoFile?.also {
+                val photoURI: Uri = FileProvider.getUriForFile(
+                    this,
+                    "com.example.piccheck.fileprovider",
+                    it
+                )
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+            }
         } else {
             // Handle the case where the camera app is not available
             // Display an error message or fallback behavior
+        }
+    }
+
+
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        // Create an image file name
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            currentPhotoPath = absolutePath
         }
     }
 
@@ -128,12 +165,24 @@ class MainActivity<File> : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            // The image was captured successfully
-            // Do something with the captured image
-            val imageBitmap = data?.extras?.get("data") as Bitmap
-            // Now you have the captured image in `imageBitmap`, you can use it as needed
-
-            val imageUri = data?.data
+            var imageUri: Uri? = null
+            if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
+                // Check if the data is null
+                if (data != null && data.data != null) {
+                    // The image was captured successfully
+                    // Do something with the captured image URI
+                    imageUri = data.data
+                    // Do something with the image URI
+                    Log.d("Image URI =", imageUri.toString())
+                } else {
+                    // If data is null, retrieve the image data from the file you specified
+                    val imageFile = File(currentPhotoPath)
+                    imageUri = Uri.fromFile(imageFile)
+                    // Do something with the image URI
+                    Log.d("Image URI =", imageUri.toString())
+                }
+            }
+            Log.d("Image URI!!!!:", imageUri.toString())
             // Pass the image URI to HomeFragment
             val fragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main)
             if (fragment is HomeFragment) {
