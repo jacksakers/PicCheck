@@ -5,22 +5,38 @@
     android:layout_height="wrap_content"
     android:padding="16dp">
 
+    <!-- Camera Icon -->
+    <ImageView
+        android:id="@+id/imageViewCamera"
+        android:layout_width="54dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_camera"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Title TextView -->
+
+    <!-- Date TextView -->
     <TextView
         android:id="@+id/textViewGoal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="8dp"
+        android:text="Example Title"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toTopOf="@+id/textViewDate"
         app:layout_constraintEnd_toStartOf="@+id/textViewDate"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@id/imageViewCamera"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textViewDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="4/23/2024"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBaseline_toBaselineOf="@id/textViewGoal" />
-
+        app:layout_constraintTop_toBottomOf="@id/textViewGoal" />
 </androidx.constraintlayout.widget.ConstraintLayout>
