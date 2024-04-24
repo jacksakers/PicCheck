@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import android.Manifest
+import com.example.piccheck.ui.home.HomeFragment
 
 
 class MainActivity<File> : AppCompatActivity() {
@@ -131,6 +132,13 @@ class MainActivity<File> : AppCompatActivity() {
             // Do something with the captured image
             val imageBitmap = data?.extras?.get("data") as Bitmap
             // Now you have the captured image in `imageBitmap`, you can use it as needed
+
+            val imageUri = data?.data
+            // Pass the image URI to HomeFragment
+            val fragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main)
+            if (fragment is HomeFragment) {
+                fragment.onImageCaptured(imageUri.toString())
+            }
         }
     }
 

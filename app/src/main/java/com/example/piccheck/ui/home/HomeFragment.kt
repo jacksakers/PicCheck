@@ -145,6 +145,14 @@ class HomeFragment : Fragment(), ReminderAdapter.ImagePickerListener {
         _binding = null
     }
 
+    fun onImageCaptured(imagePath: String) {
+        // Create a new Reminder object with the imagePath and set completed to true
+        val reminder = Reminder("Goal", "Date", "Reflection", true, imagePath)
+        // Insert the reminder to the database or update UI
+        Log.d("imagePath that was uploaded: ", imagePath)
+//        insertReminder(reminder)
+    }
+
 
     override fun onTakePictureClicked() {
         // Call the showImagePickerDialog() function here
