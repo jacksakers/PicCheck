@@ -116,7 +116,7 @@ class HomeFragment : Fragment() {
                 { view: DatePicker, year: Int, monthOfYear: Int, dayOfMonth: Int ->
                     // This is called when a date is selected.
                     val selectedDate =
-                        String.format("%02d/%02d/%04d", dayOfMonth, monthOfYear + 1, year)
+                        String.format("%02d/%02d/%04d", monthOfYear + 1, dayOfMonth, year)
                     binding?.editTextDate?.setText(selectedDate)
                 },
                 year,
