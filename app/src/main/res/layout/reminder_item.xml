@@ -52,7 +52,8 @@
             android:id="@+id/buttonTakePicture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Take Picture" />
+            android:text="Take Picture"
+            app:backgroundTint="@color/camera_orange"/>
 
         <EditText
             android:id="@+id/editTextReflection"
@@ -71,7 +72,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Delete"
-                android:layout_margin="10dp"/>
+                android:layout_margin="10dp"
+                app:backgroundTint="@color/red"/>
 
             <Button
                 android:id="@+id/buttonComplete"

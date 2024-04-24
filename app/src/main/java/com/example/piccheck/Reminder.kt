@@ -4,5 +4,6 @@ data class Reminder(
     val goal: String,
     val date: String? = null,
     val reflection: String? = null,
-    var completed: Boolean
+    var completed: Boolean,
+    var imagePath: String? = null
 )
