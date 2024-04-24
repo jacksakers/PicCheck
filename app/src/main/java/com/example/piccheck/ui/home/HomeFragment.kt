@@ -1,5 +1,6 @@
 package com.example.piccheck.ui.home
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,9 +8,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.piccheck.databinding.FragmentHomeBinding
 import android.app.DatePickerDialog
+import android.content.Intent
+import android.graphics.Bitmap
+import android.provider.MediaStore
 import android.util.Log
+import android.widget.Button
 import android.widget.DatePicker
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.piccheck.R
 import com.example.piccheck.Reminder
 import java.io.File
 import java.io.FileWriter
@@ -127,9 +135,8 @@ class HomeFragment : Fragment() {
         } catch (e: Exception) {
             Log.e("DatePicker", "Error showing DatePickerDiaglog", e)
         }
-
-
     }
+
     private fun toggleReminderInput() {
         binding?.reminderInputLayout?.visibility = if (binding?.reminderInputLayout?.visibility == View.VISIBLE) View.GONE else View.VISIBLE
     }
