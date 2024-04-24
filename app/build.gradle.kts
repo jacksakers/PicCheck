@@ -59,5 +59,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
     implementation( "com.google.code.gson:gson:2.8.8")
+    implementation( "androidx.activity:activity-ktx:1.4.0")
 
 }
