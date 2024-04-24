@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp">
 
-    <!-- Camera Icon -->
     <ImageView
         android:id="@+id/imageViewCamera"
         android:layout_width="54dp"
         android:layout_height="50dp"
+        android:layout_marginStart="8dp"
         android:src="@drawable/ic_camera"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.005" />
 
-    <!-- Title TextView -->
-
-    <!-- Date TextView -->
     <TextView
         android:id="@+id/textViewGoal"
         android:layout_width="0dp"
@@ -27,7 +26,6 @@
         android:textSize="22sp"
         app:layout_constraintBottom_toTopOf="@+id/textViewDate"
         app:layout_constraintEnd_toStartOf="@+id/textViewDate"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@id/imageViewCamera"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -39,4 +37,49 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewGoal" />
+
+    <LinearLayout
+        android:id="@+id/hiddenSection"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewDate">
+
+        <Button
+            android:id="@+id/buttonTakePicture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Take Picture" />
+
+        <EditText
+            android:id="@+id/editTextReflection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Write your reflection" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/buttonDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delete"
+                android:layout_margin="10dp"/>
+
+            <Button
+                android:id="@+id/buttonComplete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Complete"
+                android:layout_margin="10dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
