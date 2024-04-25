@@ -1,17 +1,18 @@
+package com.example.piccheck.ui.notifications
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.piccheck.R
 import com.example.piccheck.Reminder
 import com.example.piccheck.databinding.FragmentNotificationsBinding
 import com.example.piccheck.ui.home.ReminderAdapter
 import com.google.gson.Gson
 import java.io.File
 
-class NotificationsFragment : Fragment(), ReminderAdapter.ImagePickerListener {
+class NotificationsFragment : Fragment(), CompletedReminderAdapter.ImagePickerListener {
 
     private var _binding: FragmentNotificationsBinding? = null
     private val binding get() = _binding!!
@@ -30,7 +31,7 @@ class NotificationsFragment : Fragment(), ReminderAdapter.ImagePickerListener {
 
         // Load completed reminders
         val completedReminders = loadCompletedReminders()
-        val reminderAdapter = ReminderAdapter(completedReminders, this)
+        val reminderAdapter = CompletedReminderAdapter(completedReminders, this)
         binding.recyclerViewCompletedReminders.adapter = reminderAdapter
     }
 
