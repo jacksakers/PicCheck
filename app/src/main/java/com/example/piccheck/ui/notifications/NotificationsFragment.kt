@@ -1,8 +1,10 @@
 package com.example.piccheck.ui.notifications
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -71,6 +73,13 @@ class NotificationsFragment : Fragment(), CompletedReminderAdapter.ImagePickerLi
 
     override fun refreshRemindersDisplay() {
         return
+    }
+
+
+    // Implementation of the interface method to handle item click
+    override fun onReminderClicked(reminder: Reminder) {
+        // Open the reminder_details view and pass the reminder data
+        Log.d("Reminder Clicked:", reminder.goal)
     }
 
 }

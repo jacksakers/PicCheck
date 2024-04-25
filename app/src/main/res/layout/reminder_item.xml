@@ -83,16 +83,56 @@
                 android:text="Complete"
                 android:layout_margin="10dp"/>
         </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/reminderDetails"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="32dp"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/textViewGoal"
+        tools:layout_editor_absoluteX="16dp">
+
+        <TextView
+            android:id="@+id/detailTextViewGoal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:textSize="24sp"
+            tools:text="Example Goal" />
+
+        <TextView
+            android:id="@+id/detailTextViewDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:textSize="18sp" />
 
         <ImageView
-            android:id="@+id/imagePreview"
+            android:id="@+id/detailImageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/detailTextViewReflection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/detailButtonClose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/hiddenSection" />
+            android:layout_gravity="center_horizontal"
+            android:padding="16dp"
+            android:text="Close" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
