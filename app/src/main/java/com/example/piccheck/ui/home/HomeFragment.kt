@@ -9,6 +9,7 @@ import com.example.piccheck.databinding.FragmentHomeBinding
 import android.app.DatePickerDialog
 import android.util.Log
 import android.widget.DatePicker
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.piccheck.MainActivity
 import com.example.piccheck.Reminder
@@ -46,7 +47,8 @@ class HomeFragment : Fragment(), ReminderAdapter.ImagePickerListener {
 
         //Load data from database and update adapter
         val remindersFromFile = readRemindersFromFile()
-        reminderAdapter.updateData(remindersFromFile)
+        val activeReminders = remindersFromFile.filter { !it.completed }  // Filter out completed reminders
+        reminderAdapter.updateData(activeReminders)
 
         binding?.fab?.setOnClickListener {
             toggleReminderInput()
@@ -70,7 +72,8 @@ class HomeFragment : Fragment(), ReminderAdapter.ImagePickerListener {
     fun insertReminder(reminder: Reminder) {
         reminderManager.insertReminder(reminder)
         val remindersFromFile = reminderManager.readRemindersFromFile()
-        reminderAdapter.updateData(remindersFromFile)
+        val activeReminders = remindersFromFile.filter { !it.completed }
+        reminderAdapter.updateData(activeReminders)
     }
 
     private fun readRemindersFromFile(): List<Reminder> {
@@ -83,6 +86,16 @@ class HomeFragment : Fragment(), ReminderAdapter.ImagePickerListener {
 
     override fun writeDataToFile(data: String) {
         writeToFile(data)
+    }
+
+    override fun alertForMissingPicture() {
+        Toast.makeText(context, "Please attach a picture before completing the reminder.", Toast.LENGTH_LONG).show()
+    }
+
+    override fun refreshRemindersDisplay() {
+        val remindersFromFile = readRemindersFromFile()
+        val activeReminders = remindersFromFile.filter { !it.completed }
+        reminderAdapter.updateData(activeReminders)
     }
 
     fun getRandomString(length: Int) : String {

@@ -1,5 +1,7 @@
 package com.example.piccheck.ui.home
 
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +16,7 @@ import com.google.gson.Gson
 
 class ReminderAdapter(private var reminders: List<Reminder>, private val imagePickerListener: ImagePickerListener) : RecyclerView.Adapter<ReminderAdapter.ReminderViewHolder>() {
 
+    private var reflectionText: String? = null
     class ReminderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val textViewGoal: TextView = view.findViewById(R.id.textViewGoal)
         val textViewDate: TextView = view.findViewById(R.id.textViewDate)
@@ -39,6 +42,18 @@ class ReminderAdapter(private var reminders: List<Reminder>, private val imagePi
         val reminder = reminders[position]
         holder.textViewGoal.text = reminder.goal
         holder.textViewDate.text = reminder.date ?: "No Date"
+        holder.editTextReflection.setText(reminder.reflection)
+
+        holder.editTextReflection.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                // Update the reflection in the model when text changes
+                reminder.reflection = s.toString()
+            }
+        })
+
+
         holder.hiddenSection.visibility = View.GONE
 
         holder.buttonTakePicture.setOnClickListener {
@@ -52,6 +67,7 @@ class ReminderAdapter(private var reminders: List<Reminder>, private val imagePi
         holder.buttonComplete.setOnClickListener {
             completeReminderAt(position)
         }
+
     }
 
     private fun removeReminderAt(position: Int) {
@@ -66,8 +82,18 @@ class ReminderAdapter(private var reminders: List<Reminder>, private val imagePi
 
     private fun completeReminderAt(position: Int) {
         // Modify the reminder to reflect it's complete
-        reminders[position].completed = true
-        notifyItemChanged(position)
+        if (reminders[position].imagePath != null) {
+
+            reminders[position].completed = true
+            notifyItemChanged(position)
+            val gson = Gson()
+            val json = gson.toJson(reminders)
+            imagePickerListener.writeDataToFile(json)
+            imagePickerListener.refreshRemindersDisplay()
+        } else {
+            //Add alert to make sure they take a picture
+            imagePickerListener.alertForMissingPicture()
+        }
     }
 
     override fun getItemCount() = reminders.size
@@ -80,5 +106,8 @@ class ReminderAdapter(private var reminders: List<Reminder>, private val imagePi
     interface ImagePickerListener {
         fun onTakePictureClicked(id: String)
         fun writeDataToFile(data: String)
+
+        fun alertForMissingPicture()
+        fun refreshRemindersDisplay()
     }
 }
