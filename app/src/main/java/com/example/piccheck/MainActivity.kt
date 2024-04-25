@@ -210,23 +210,25 @@ class MainActivity : AppCompatActivity() {
     fun showImagePickerDialog(id: String) {
 
         if (hasCameraPermission()) {
-
-            val options = arrayOf("Take Photo", "Choose from Gallery")
             currentID = id
 
-            AlertDialog.Builder(this)
-                .setTitle("Choose Action")
-                .setItems(options) { dialog, which ->
-                    when (which) {
-                        0 -> openImageTaker(id)// Launch camera for taking a picture
-                        1 -> pickImageLauncher.launch("image/*") // Launch image picker for selecting from gallery
-                    }
-                    dialog.dismiss()
-                }
-                .setNegativeButton("Cancel") { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .show()
+//            val options = arrayOf("Take Photo", "Choose from Gallery")
+//
+//            AlertDialog.Builder(this)
+//                .setTitle("Choose Action")
+//                .setItems(options) { dialog, which ->
+//                    when (which) {
+//                        0 -> openImageTaker(id)// Launch camera for taking a picture
+//                        1 -> pickImageLauncher.launch("image/*") // Launch image picker for selecting from gallery
+//                    }
+//                    dialog.dismiss()
+//                }
+//                .setNegativeButton("Cancel") { dialog, _ ->
+//                    dialog.dismiss()
+//                }
+//                .show()
+
+            openImageTaker(id)
         } else {
             requestCameraPermission()
         }
