@@ -23,7 +23,7 @@ class HomeFragment : Fragment(), ReminderAdapter.ImagePickerListener {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding
 
-    val reminderAdapter = ReminderAdapter(listOf(), this)
+    val reminderAdapter = ReminderAdapter(listOf(), listOf(), this)
 
     private lateinit var reminderManager: ReminderManager
 
@@ -42,13 +42,14 @@ class HomeFragment : Fragment(), ReminderAdapter.ImagePickerListener {
 
         reminderManager = ReminderManager(requireContext())
 
+        //Load data from database and update adapter
+        val remindersFromFile = readRemindersFromFile()
+        reminderAdapter.updateData(remindersFromFile)
+
         binding?.recyclerViewReminders?.adapter = reminderAdapter
         binding?.recyclerViewReminders?.layoutManager = LinearLayoutManager(context)
 
-        //Load data from database and update adapter
-        val remindersFromFile = readRemindersFromFile()
-        val activeReminders = remindersFromFile.filter { !it.completed }  // Filter out completed reminders
-        reminderAdapter.updateData(activeReminders)
+
 
         binding?.fab?.setOnClickListener {
             toggleReminderInput()
@@ -72,8 +73,7 @@ class HomeFragment : Fragment(), ReminderAdapter.ImagePickerListener {
     fun insertReminder(reminder: Reminder) {
         reminderManager.insertReminder(reminder)
         val remindersFromFile = reminderManager.readRemindersFromFile()
-        val activeReminders = remindersFromFile.filter { !it.completed }
-        reminderAdapter.updateData(activeReminders)
+        reminderAdapter.updateData(remindersFromFile)
     }
 
     private fun readRemindersFromFile(): List<Reminder> {
@@ -94,8 +94,7 @@ class HomeFragment : Fragment(), ReminderAdapter.ImagePickerListener {
 
     override fun refreshRemindersDisplay() {
         val remindersFromFile = readRemindersFromFile()
-        val activeReminders = remindersFromFile.filter { !it.completed }
-        reminderAdapter.updateData(activeReminders)
+        reminderAdapter.updateData(remindersFromFile)
     }
 
     fun getRandomString(length: Int) : String {

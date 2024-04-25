@@ -40,8 +40,6 @@ class CompletedReminderAdapter(private var reminders: List<Reminder>, private va
         holder.textViewGoal.text = reminder.goal
         holder.textViewDate.text = reminder.date ?: "No Date"
         holder.hiddenSection.visibility = View.GONE
-
-
     }
 
     override fun getItemCount(): Int {
