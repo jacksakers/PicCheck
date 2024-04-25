@@ -26,6 +26,7 @@ import java.util.Date
 import java.util.Locale
 import android.Manifest
 import android.util.Log
+import android.widget.ImageView
 import com.example.piccheck.ui.home.HomeFragment
 
 
@@ -77,6 +78,10 @@ class MainActivity : AppCompatActivity() {
             // Image was selected successfully
             // Do something with the selected image URI
             Log.d("Image Launcher URI =", uri.toString())
+
+            val reminderImageView = findViewById<ImageView>(R.id.imageViewCamera)
+            reminderManager.updateReminderImagePath(currentID, uri.toString(), reminderImageView)
+
         } else {
             // Image selection was canceled or failed
             // Handle accordingly
@@ -190,8 +195,8 @@ class MainActivity : AppCompatActivity() {
             }
             Log.d("Image URI!!!!:", imageUri.toString())
 
-            reminderManager.updateReminderImagePath(currentID, imageUri.toString())
-
+            val reminderImageView = findViewById<ImageView>(R.id.imageViewCamera)
+            reminderManager.updateReminderImagePath(currentID, imageUri.toString(), reminderImageView)
 
 
             // Pass the image URI to HomeFragment

@@ -14,7 +14,7 @@ class ReminderManager(private val context: Context) {
 
     private val fileName = "reminders.json"
 
-    fun updateReminderImagePath(reminderId: String, imagePath: String) {
+    fun updateReminderImagePath(reminderId: String, imagePath: String, imageView: ImageView) {
         // Read existing reminders from file
         val existingReminders = readRemindersFromFile()
 
@@ -35,16 +35,9 @@ class ReminderManager(private val context: Context) {
         // Write the updated JSON to the file
         writeToFile(json)
 
-        // Assuming 'imagePreview' is the ImageView for image preview
-//        val imagePreview = findViewById<ImageView>(R.id.imagePreview)
-//
-//        // Set the visibility    of the imagePreview to VISIBLE
-//        imagePreview.visibility = View.VISIBLE
-//
-//        // Load the selected image into the ImageView using Glide
-//        Glide.with(this)
-//            .load(imagePath.toUri()) // Provide the URI of the selected image
-//            .into(imagePreview)
+
+        // Load the image into the ImageView
+        imageView.setImageURI(imagePath.toUri())
     }
 
     fun insertReminder(reminder: Reminder) {
@@ -71,6 +64,8 @@ class ReminderManager(private val context: Context) {
 
         val json = file.readText()
         val gson = Gson()
+        Log.d("FILE READ:", json)
+
         return gson.fromJson(json, Array<Reminder>::class.java).toList()
     }
 
