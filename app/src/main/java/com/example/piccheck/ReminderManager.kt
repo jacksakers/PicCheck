@@ -27,7 +27,6 @@ class ReminderManager(private val context: Context) {
                 reminder
             }
         }
-
         // Convert the updated list to JSON
         val gson = Gson()
         val json = gson.toJson(updatedReminders)
