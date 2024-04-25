@@ -42,7 +42,7 @@ class ReminderAdapter(private var reminders: List<Reminder>, private val imagePi
         holder.hiddenSection.visibility = View.GONE
 
         holder.buttonTakePicture.setOnClickListener {
-            imagePickerListener.onTakePictureClicked()
+            imagePickerListener.onTakePictureClicked(reminder.id)
         }
 
         holder.buttonDelete.setOnClickListener {
@@ -78,7 +78,7 @@ class ReminderAdapter(private var reminders: List<Reminder>, private val imagePi
     }
 
     interface ImagePickerListener {
-        fun onTakePictureClicked()
+        fun onTakePictureClicked(id: String)
         fun writeDataToFile(data: String)
     }
 }

@@ -3,7 +3,6 @@ package com.example.piccheck
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -34,8 +33,14 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    private lateinit var reminderManager: ReminderManager
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        reminderManager = ReminderManager(this)
+
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -84,9 +89,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var currentPhotoPath: String
+    private lateinit var currentID: String
 
 
-    private fun openImageTaker() {
+    private fun openImageTaker(id: String) {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(packageManager) != null) {
@@ -155,7 +161,7 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission granted, open the image picker
-                showImagePickerDialog()
+//                showImagePickerDialog(id)
             } else {
                 // Permission denied, handle accordingly (e.g., show an explanation or disable functionality)
             }
@@ -183,25 +189,31 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             Log.d("Image URI!!!!:", imageUri.toString())
+
+            reminderManager.updateReminderImagePath(currentID, imageUri.toString())
+
+
+
             // Pass the image URI to HomeFragment
-            val fragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main)
-            if (fragment is HomeFragment) {
-                fragment.onImageCaptured(imageUri.toString())
-            }
+//            val fragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main)
+//            if (fragment is HomeFragment) {
+//                fragment.onImageCaptured(imageUri.toString())
+//            }
         }
     }
 
-    fun showImagePickerDialog() {
+    fun showImagePickerDialog(id: String) {
 
         if (hasCameraPermission()) {
 
             val options = arrayOf("Take Photo", "Choose from Gallery")
+            currentID = id
 
             AlertDialog.Builder(this)
                 .setTitle("Choose Action")
                 .setItems(options) { dialog, which ->
                     when (which) {
-                        0 -> openImageTaker()// Launch camera for taking a picture
+                        0 -> openImageTaker(id)// Launch camera for taking a picture
                         1 -> pickImageLauncher.launch("image/*") // Launch image picker for selecting from gallery
                     }
                     dialog.dismiss()

@@ -1,6 +1,5 @@
 package com.example.piccheck.ui.home
 
-import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,29 +7,25 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.piccheck.databinding.FragmentHomeBinding
 import android.app.DatePickerDialog
-import android.content.Intent
-import android.graphics.Bitmap
-import android.provider.MediaStore
 import android.util.Log
-import android.widget.Button
 import android.widget.DatePicker
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.piccheck.MainActivity
-import com.example.piccheck.R
 import com.example.piccheck.Reminder
+import com.example.piccheck.ReminderManager
 import java.io.File
 import java.io.FileWriter
 import java.util.Calendar
 import com.google.gson.Gson
-import kotlin.random.Random
 
 class HomeFragment : Fragment(), ReminderAdapter.ImagePickerListener {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding
 
     val reminderAdapter = ReminderAdapter(listOf(), this)
+
+    private lateinit var reminderManager: ReminderManager
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,6 +39,7 @@ class HomeFragment : Fragment(), ReminderAdapter.ImagePickerListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        reminderManager = ReminderManager(requireContext())
 
         binding?.recyclerViewReminders?.adapter = reminderAdapter
         binding?.recyclerViewReminders?.layoutManager = LinearLayoutManager(context)
@@ -70,6 +66,21 @@ class HomeFragment : Fragment(), ReminderAdapter.ImagePickerListener {
         }
     }
 
+
+    fun insertReminder(reminder: Reminder) {
+        reminderManager.insertReminder(reminder)
+        val remindersFromFile = reminderManager.readRemindersFromFile()
+        reminderAdapter.updateData(remindersFromFile)
+    }
+
+    private fun readRemindersFromFile(): List<Reminder> {
+        return reminderManager.readRemindersFromFile()
+    }
+
+    private fun writeToFile(data: String) {
+        reminderManager.writeToFile(data)
+    }
+
     override fun writeDataToFile(data: String) {
         writeToFile(data)
     }
@@ -79,43 +90,6 @@ class HomeFragment : Fragment(), ReminderAdapter.ImagePickerListener {
         return (1..length)
             .map { allowedChars.random() }
             .joinToString("")
-    }
-    private fun insertReminder(reminder: Reminder) {
-        val remindersList = mutableListOf<Reminder>()
-
-        // Read existing reminders from file
-        val existingReminders = readRemindersFromFile()
-
-        // Add the new reminder
-        remindersList.addAll(existingReminders)
-        remindersList.add(reminder)
-
-        // Convert the list to JSON
-        val gson = Gson()
-        val json = gson.toJson(remindersList)
-
-        // Write JSON to file
-        writeToFile(json)
-
-        val remindersFromFile = readRemindersFromFile()
-        reminderAdapter.updateData(remindersFromFile)
-    }
-
-    private fun readRemindersFromFile(): List<Reminder> {
-        val file = File(requireContext().filesDir, "reminders.json")
-        if (!file.exists()) return emptyList()
-
-        val json = file.readText()
-        val gson = Gson()
-        return gson.fromJson(json, Array<Reminder>::class.java).toList()
-    }
-
-    public fun writeToFile(data: String) {
-        val file = File(requireContext().filesDir, "reminders.json")
-        FileWriter(file).use {
-            it.write(data)
-        }
-        Log.d("WriteToFile", "Data written to file: $data")
     }
 
     public fun showDatePicker(view: View) {
@@ -165,8 +139,8 @@ class HomeFragment : Fragment(), ReminderAdapter.ImagePickerListener {
     }
 
 
-    override fun onTakePictureClicked() {
+    override fun onTakePictureClicked(id: String) {
         // Call the showImagePickerDialog() function here
-        (activity as? MainActivity)?.showImagePickerDialog()
+        (activity as? MainActivity)?.showImagePickerDialog(id)
     }
 }
